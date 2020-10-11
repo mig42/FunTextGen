@@ -14,6 +14,14 @@ module Chain =
 
     type Chain = Map<Word list, WeightedTransition list>
 
+    let addTransition (chain: Chain) (key: Word list) word: Chain =
+        let newTransitions =
+            match Map.tryFind key chain with
+            | Some(transitions) -> addTransitionToList transitions word
+            | None -> [{ Word = word; Weight = 1 }]
+
+        Map.add key newTransitions chain
+
     let private addTransitionToList transitions word =
         let addWeight transition =
             match transition with
@@ -24,11 +32,3 @@ module Chain =
             List.map addWeight transitions
         else
             { Word = word; Weight = 1 } :: transitions
-
-    let addTransition (chain: Chain) (key: Word list) word: Chain =
-        let newTransitions =
-            match Map.tryFind key chain with
-            | Some(transitions) -> addTransitionToList transitions word
-            | None -> [{ Word = word; Weight = 1 }]
-
-        Map.add key newTransitions chain

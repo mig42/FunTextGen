@@ -6,10 +6,7 @@
     <content url="file://$USER_HOME$/.nuget/packages/nunit3testadapter/3.17.0/build/net35/nunit.engine.api.dll" />
     <content url="file://$USER_HOME$/.nuget/packages/nunit3testadapter/3.17.0/build/net35/nunit.engine.core.dll" />
     <content url="file://$USER_HOME$/.nuget/packages/nunit3testadapter/3.17.0/build/net35/nunit.engine.dll" />
-    <content url="file://$MODULE_DIR$/../..">
-      <excludeFolder url="file://$MODULE_DIR$/../../.ionide" />
-      <excludeFolder url="file://$MODULE_DIR$/../../src/obj" />
-    </content>
+    <content url="file://$MODULE_DIR$/../.." />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
