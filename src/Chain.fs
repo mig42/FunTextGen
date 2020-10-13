@@ -5,19 +5,17 @@ open FunTextGen.Types.Chain
 
 module Chain =
     module Transition =
-        let add transitions word =
+        let add word transitions =
             let addWeight word transition =
                 match transition with
                     | t when t.Word = word ->
-                        {
-                            t with Weight = t.Weight + 1
-                        }
+                        { t with Weight = t.Weight + 1 }
                     | t -> t
 
-            let isWordInTransitions transitions word =
+            let isWordInTransitions word transitions =
                 List.exists (fun t -> t.Word = word) transitions
 
-            match isWordInTransitions transitions word with
+            match isWordInTransitions word transitions with
             | true -> List.map (addWeight word) transitions
             | false ->
                 {
@@ -25,29 +23,34 @@ module Chain =
                     Weight = 1
                 } :: transitions
 
-        let getWeight transition =
-            transition.Weight
-
         let getNext random transitions =
-            let targetWeight = random.GetNext <| List.sumBy getWeight transitions
-            Token.Last
+            let rec findTransition currentWeight transitions targetWeight =
+                match transitions with
+                    | [] -> Word.Last
+                    | t :: rest ->
+                        let newWeight = currentWeight + t.Weight
+                        match newWeight with
+                            | w when w <= targetWeight ->
+                                findTransition newWeight rest targetWeight
+                            | _w -> t.Word
 
-    let addTransition (chain: Chain) key word: Chain =
-        let getNewTransitions word existingTransitions =
+            transitions
+                |> List.sumBy (fun t -> t.Weight)
+                |> random.GetNext
+                |> findTransition 0 transitions
+
+    let addTransition (chain: Chain) words nextWord: Chain =
+        let buildTransitions word existingTransitions =
             match existingTransitions with
-            | Some(transitions) -> Transition.add transitions word
-            | None ->
-                [{
-                    Word = word
-                    Weight = 1
-                }]
+            | Some(transitions) -> Transition.add word transitions
+            | None -> [{ Word = nextWord; Weight = 1 }]
 
         chain
-            |> Map.tryFind key
-            |> getNewTransitions word
-            |> Map.add key <| chain
+            |> Map.tryFind words
+            |> buildTransitions nextWord
+            |> Map.add words <| chain
 
-    let getNextWord (chain: Chain) key random =
-        match Map.tryFind key chain with
+    let getNextWord (chain: Chain) words random =
+        match Map.tryFind words chain with
         | Some(transitions) -> Transition.getNext random transitions
-        | None -> Token.Last
+        | None -> Word.Last

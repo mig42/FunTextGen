@@ -8,13 +8,10 @@ module rec Types =
     type Chain = Map<Chain.Word list, Chain.WeightedTransition list>
 
     module Chain =
-        type Token =
-            | First
-            | Last
-
         type Word =
             | Text of string
-            | Token of Token
+            | First
+            | Last
 
         type WeightedTransition = {
             Word: Word
