@@ -42,14 +42,12 @@ module Chain =
                     Weight = 1
                 }]
 
-        let newTransitions =
-            chain
+        chain
             |> Map.tryFind key
             |> getNewTransitions word
-        Map.add key newTransitions chain
+            |> Map.add key <| chain
 
     let getNextWord (chain: Chain) key random =
         match Map.tryFind key chain with
         | Some(transitions) -> Transition.getNext random transitions
         | None -> Token.Last
-
